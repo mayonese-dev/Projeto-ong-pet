@@ -1,24 +1,14 @@
+# main.py
 import tkinter as tk
 from tkinter import messagebox
 import banco
 import os
 from datetime import datetime
+import login_page
 
 os.makedirs("relatorios", exist_ok=True)
 banco.criar_tabela_animais()
 banco.criar_tabela_usuarios()
-
-def login():
-    nome_usuario = entrada_usuario.get()
-    senha = entrada_senha.get()
-    if nome_usuario and senha:
-        nome_real = banco.validar_login(nome_usuario, senha)
-        if nome_real:
-            abrir_menu(nome_usuario)
-        else:
-            messagebox.showerror("Erro", "Usuário ou senha incorretos.")
-    else:
-        messagebox.showerror("Erro", "Preencha todos os campos.")
 
 def abrir_menu(nome_usuario):
     limpar_janela()
@@ -38,7 +28,7 @@ def abrir_menu(nome_usuario):
     tk.Button(janela, text="➕ Cadastrar Animal", width=20, command=cadastrar).pack(pady=5)
     tk.Button(janela, text="📄 Ver Animais", width=20, command=ver_animais).pack(pady=5)
     tk.Button(janela, text="📝 Gerar Relatório", width=20, command=relatorio).pack(pady=5)
-    tk.Button(janela, text="Logout", width=20, command=tela_login).pack(pady=20)
+    tk.Button(janela, text="Logout", width=20, command=lambda: login_page.tela_login(janela, abrir_menu)).pack(pady=20)
 
     agora = datetime.now().strftime("%d/%m/%Y %H:%M")
     tk.Label(janela, text=f"Acesso em: {agora}", font=("Arial", 10), fg="gray").pack(side="bottom", pady=10)
@@ -212,76 +202,9 @@ def limpar_janela():
     for widget in janela.winfo_children():
         widget.destroy()
 
-def tela_login():
-    limpar_janela()
-    tk.Label(janela, text="Login", font=("Arial", 25, "bold")).pack(pady=20)
-
-    tk.Label(janela, text="Nome de Usuário:").pack()
-    global entrada_usuario
-    entrada_usuario = tk.Entry(janela)
-    entrada_usuario.pack()
-
-    tk.Label(janela, text="Senha:").pack()
-    global entrada_senha
-    entrada_senha = tk.Entry(janela, show="*")
-    entrada_senha.pack()
-
-    tk.Button(janela, text="Entrar", width=15, command=login).pack(pady=10)
-    tk.Button(janela, text="Cadastrar", width=15, command=tela_cadastro).pack()
-
-    def suporte():
-        messagebox.showinfo("Esqueceu a Senha", "Contate o suporte online.")
-
-    tk.Button(janela, text="Esqueceu a senha?", width=20, fg="black", command=suporte).pack(pady=10)
-
-def tela_cadastro():
-    limpar_janela()
-    tk.Label(janela, text="Cadastro de Usuário", font=("Arial", 25, "bold")).pack(pady=20)
-
-    tk.Label(janela, text="Nome:").pack()
-    nome = tk.Entry(janela)
-    nome.pack()
-
-    tk.Label(janela, text="Sobrenome:").pack()
-    sobrenome = tk.Entry(janela)
-    sobrenome.pack()
-
-    tk.Label(janela, text="Email:").pack()
-    email = tk.Entry(janela)
-    email.pack()
-
-    tk.Label(janela, text="Nome de Usuário:").pack()
-    usuario = tk.Entry(janela)
-    usuario.pack()
-
-    tk.Label(janela, text="Senha:").pack()
-    senha = tk.Entry(janela, show="*")
-    senha.pack()
-
-    def salvar_usuario():
-        if not (nome.get() and sobrenome.get() and email.get() and usuario.get() and senha.get()):
-            messagebox.showerror("Erro", "Preencha todos os campos.")
-            return
-
-        sucesso = banco.cadastrar_usuario(
-            nome.get(),
-            sobrenome.get(),
-            email.get(),
-            usuario.get(),
-            senha.get()
-        )
-
-        if sucesso:
-            messagebox.showinfo("Sucesso", "Usuário cadastrado com sucesso!")
-            tela_login()
-        else:
-            messagebox.showerror("Erro", "Email ou nome de usuário já cadastrado.")
-
-    tk.Button(janela, text="Salvar", width=15, command=salvar_usuario).pack(pady=10)
-    tk.Button(janela, text="Voltar", width=15, command=tela_login).pack()
-
+# Iniciar o programa:
 janela = tk.Tk()
 janela.title("Adote com Amor")
 janela.geometry("400x550")
-tela_login()
+login_page.tela_login(janela, abrir_menu)
 janela.mainloop()
