@@ -1,4 +1,3 @@
-# main.py
 import tkinter as tk
 from tkinter import messagebox
 import banco
@@ -202,7 +201,6 @@ def limpar_janela():
     for widget in janela.winfo_children():
         widget.destroy()
 
-# Iniciar o programa:
 janela = tk.Tk()
 janela.title("Adote com Amor")
 janela.geometry("400x550")
